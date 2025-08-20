@@ -1,0 +1,2176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>中国短道速滑国家队</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+            animation: float 20s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+            0% { transform: translateX(-50px) translateY(-50px); }
+            100% { transform: translateX(50px) translateY(50px); }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            position: relative;
+            z-index: 2;
+            opacity: 0.9;
+        }
+
+        .user-auth {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .auth-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .auth-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 15px;
+            transition: background 0.3s ease;
+            font-size: 12px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 登录/注册模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from { opacity: 0; transform: translateY(-30px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #c41e3a;
+        }
+
+        .modal h3 {
+            text-align: center;
+            color: #c41e3a;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            outline: none;
+        }
+
+        .form-group input:focus {
+            border-color: #c41e3a;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(196, 30, 58, 0.3);
+        }
+
+        .switch-form {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+
+        .switch-form a {
+            color: #c41e3a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+
+        .nav {
+            background: #2c3e50;
+            padding: 0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .nav li {
+            margin: 0;
+        }
+
+        .nav a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 18px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav a:hover::before,
+        .nav a.active::before {
+            left: 0;
+        }
+
+        .nav a:hover,
+        .nav a.active {
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .content {
+            padding: 40px 30px;
+            min-height: 60vh;
+        }
+
+        .section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero h2 {
+            font-size: 2.5em;
+            color: #c41e3a;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: #c41e3a;
+        }
+
+        .card h3 {
+            color: #c41e3a;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .card p {
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .athlete-profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .athlete-profile:hover {
+            transform: translateX(10px);
+        }
+
+        .athlete-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .athlete-info h3 {
+            color: #c41e3a;
+            margin-bottom: 5px;
+            font-size: 1.3em;
+        }
+
+        .athlete-info p {
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .athlete-name-link {
+            color: #c41e3a;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .athlete-name-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+            transition: width 0.3s ease;
+        }
+
+        .athlete-name-link:hover {
+            color: #ff6b6b;
+            transform: translateX(5px);
+        }
+
+        .athlete-name-link:hover::after {
+            width: 100%;
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-thumbnail {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+            position: relative;
+        }
+
+        .video-thumbnail::before {
+            content: '▶';
+            position: absolute;
+            z-index: 2;
+        }
+
+        .video-info {
+            padding: 20px;
+        }
+
+        .video-title {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .video-description {
+            color: #666;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        /* 视频播放器样式 */
+        .video-player-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-player {
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 4em;
+            cursor: pointer;
+        }
+
+        .video-player.playing {
+            background: #000;
+        }
+
+        .video-player video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-controls {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .video-player-container:hover .video-controls,
+        .video-controls.show {
+            transform: translateY(0);
+        }
+
+        .controls-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .play-pause-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .play-pause-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .progress-container {
+            flex: 1;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+
+        .time-display {
+            color: white;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .volume-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .fullscreen-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .fullscreen-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 视频播放页面布局 */
+        .video-watch-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .video-main {
+            flex: 1;
+        }
+
+        .video-sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+        }
+
+        .video-info-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .video-info-section h3 {
+            color: #c41e3a;
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .video-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .video-date {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .video-views {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .like-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .like-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(196, 30, 58, 0.3);
+        }
+
+        .like-btn.liked {
+            background: linear-gradient(135deg, #ff6b6b, #c41e3a);
+            animation: likeEffect 0.3s ease;
+        }
+
+        @keyframes likeEffect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .like-count {
+            font-weight: bold;
+        }
+
+        .like-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .login-required {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        /* 评论区样式 */
+        .comments-section {
+            margin-top: 30px;
+        }
+
+        .comments-section h4 {
+            color: #c41e3a;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .comment-input-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .comment-input-wrapper {
+            flex: 1;
+        }
+
+        .comment-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 0.95em;
+            outline: none;
+            transition: border-color 0.3s ease;
+            resize: none;
+            min-height: 45px;
+            font-family: inherit;
+        }
+
+        .comment-input:focus {
+            border-color: #c41e3a;
+        }
+
+        .comment-input:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .comment-submit {
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-submit:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(196, 30, 58, 0.3);
+        }
+
+        .comment-submit:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .comments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .comment-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: background 0.3s ease;
+        }
+
+        .comment-item:hover {
+            background: #e3f2fd;
+        }
+
+        .comment-content {
+            flex: 1;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: #c41e3a;
+            margin-bottom: 5px;
+        }
+
+        .comment-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .comment-time {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .no-comments {
+            text-align: center;
+            color: #999;
+            font-style: italic;
+            padding: 40px;
+        }
+
+        .login-prompt {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            color: #666;
+        }
+
+        .login-prompt a {
+            color: #c41e3a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-prompt a:hover {
+            text-decoration: underline;
+        }
+
+        /* 返回按钮 */
+        .back-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+
+        /* 新闻样式 */
+        .news-item {
+            padding: 20px;
+            border-left: 4px solid #c41e3a;
+            background: #f8f9fa;
+            margin-bottom: 20px;
+            border-radius: 0 8px 8px 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-item:hover {
+            background: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(5px);
+        }
+
+        .news-date {
+            color: #999;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .news-title {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .news-content {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .video-watch-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .video-sidebar {
+                order: 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .user-auth {
+                position: static;
+                justify-content: center;
+                margin-top: 15px;
+            }
+            
+            .nav ul {
+                flex-direction: column;
+            }
+            
+            .nav a {
+                text-align: center;
+                padding: 15px;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .athlete-profile {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .video-player {
+                height: 250px;
+                font-size: 2.5em;
+            }
+
+            .video-meta {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .controls-row {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .volume-container {
+                order: 3;
+                flex-basis: 100%;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 30px 20px;
+            }
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+        }
+
+        .footer p {
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #c41e3a, #ff6b6b);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(196, 30, 58, 0.3);
+        }
+
+        /* 全屏样式 */
+        .video-player-container.fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 9999;
+            max-width: none;
+            border-radius: 0;
+        }
+
+        .video-player-container.fullscreen .video-player {
+            height: 100vh;
+        }
+
+        .achievement {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #333;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: 500;
+            display: inline-block;
+        }
+
+        /* 错误提示 */
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #c62828;
+            display: none;
+        }
+
+        .success-message {
+            background: #e8f5e8;
+            color: #2e7d32;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #2e7d32;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>中国短道速滑国家队</h1>
+            <p>追求卓越 • 勇争第一 • 为国争光</p>
+            
+            <!-- 用户认证区域 -->
+            <div class="user-auth" id="userAuth">
+                <a href="#" class="auth-btn" id="loginBtn">登录</a>
+                <a href="#" class="auth-btn" id="registerBtn">注册</a>
+            </div>
+            
+            <!-- 用户信息显示 -->
+            <div class="user-info" id="userInfo" style="display: none;">
+                <div class="user-avatar" id="userAvatar">用</div>
+                <span id="username">用户</span>
+                <button class="logout-btn" id="logoutBtn">退出</button>
+            </div>
+        </header>
+
+        <!-- 登录模态框 -->
+        <div class="modal" id="loginModal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeLoginModal">&times;</button>
+                <h3>用户登录</h3>
+                <div class="error-message" id="loginError"></div>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsername">用户名</label>
+                        <input type="text" id="loginUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">密码</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="submit-btn">登录</button>
+                </form>
+                <div class="switch-form">
+                    还没有账户？<a href="#" id="showRegister">立即注册</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 注册模态框 -->
+        <div class="modal" id="registerModal">
+            <div class="modal-content">
+                <button class="close-btn" id="closeRegisterModal">&times;</button>
+                <h3>用户注册</h3>
+                <div class="error-message" id="registerError"></div>
+                <div class="success-message" id="registerSuccess"></div>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerUsername">用户名</label>
+                        <input type="text" id="registerUsername" required minlength="3" maxlength="20">
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">密码</label>
+                        <input type="password" id="registerPassword" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">确认密码</label>
+                        <input type="password" id="confirmPassword" required minlength="6">
+                    </div>
+                    <button type="submit" class="submit-btn">注册</button>
+                </form>
+                <div class="switch-form">
+                    已有账户？<a href="#" id="showLogin">立即登录</a>
+                </div>
+            </div>
+        </div>
+
+        <nav class="nav">
+            <ul>
+                <li><a href="#" class="nav-link active" data-section="home">首页</a></li>
+                <li><a href="#" class="nav-link" data-section="athletes">队员介绍</a></li>
+                <li><a href="#" class="nav-link" data-section="videos">赛事回放</a></li>
+                <li><a href="#" class="nav-link" data-section="results">赛事成绩</a></li>
+                <li><a href="#" class="nav-link" data-section="news">相关通知</a></li>
+            </ul>
+        </nav>
+
+        <main class="content">
+            <!-- 首页 -->
+            <section id="home" class="section active">
+                <div class="hero">
+                    <h2>欢迎来到中国短道速滑国家队</h2>
+                    <p>中国短道速滑国家队是中国冰上运动的骄傲，我们在冬奥会、世锦赛等重大赛事中屡创佳绩，为祖国赢得了无数荣誉。队伍秉承"更快、更高、更强、更团结"的奥林匹克精神，不断追求卓越，为中国体育事业的发展贡献力量。</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">奥运金牌</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">42</div>
+                        <div class="stat-label">世界冠军</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">28</div>
+                        <div class="stat-label">现役队员</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">30</div>
+                        <div class="stat-label">年队龄</div>
+                    </div>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card">
+                        <h3>队伍简介</h3>
+                        <p>中国短道速滑队成立于1992年，是中国冰雪运动的重要组成部分。经过三十多年的发展，队伍在技术水平、训练理念和竞技成绩等方面都达到了世界先进水平。</p>
+                    </div>
+                    <div class="card">
+                        <h3>训练基地</h3>
+                        <p>队伍主要在北京首都体育馆、黑龙江齐齐哈尔等地进行训练。拥有世界一流的训练设施和专业的教练团队，为运动员创造最佳的训练环境。</p>
+                    </div>
+                    <div class="card">
+                        <h3>教练团队</h3>
+                        <p>由经验丰富的中外教练组成的专业团队，包括技术教练、体能教练、心理教练等，为运动员提供全方位的专业指导和支持。</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 队员介绍 -->
+            <section id="athletes" class="section">
+                <div class="hero">
+                    <h2>我们的运动员</h2>
+                    <p>介绍我们优秀的短道速滑运动员，他们是中国冰雪运动的杰出代表</p>
+                </div>
+
+                <div class="athlete-profile">
+                    <div class="athlete-avatar">刘</div>
+                    <div class="athlete-info">
+                        <h3><a href="#" class="athlete-name-link" data-athlete="liu-shaoang">刘少昂</a></h3>
+                        <p><strong>出生地：</strong>中国河北省</p>
+                        <p><strong>年龄：</strong>26岁</p>
+                        <span class="achievement">北京冬奥会金牌得主</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 赛事回放 -->
+            <section id="videos" class="section">
+                <div class="hero">
+                    <h2>赛事回放</h2>
+                    <p>观看精彩比赛回放，重温激动人心的竞技时刻</p>
+                </div>
+
+                <div class="video-grid">
+                    <div class="video-card" data-video="2025-worlds">
+                        <div class="video-thumbnail"></div>
+                        <div class="video-info">
+                            <div class="video-title">2025年世界短道速滑锦标赛</div>
+                            <div class="video-description">
+                                <p><strong>时间：</strong>2025年3月15-17日</p>
+                                <p><strong>地点：</strong>荷兰鹿特丹</p>
+                                <p><strong>精彩看点：</strong>刘少昂夺得1500米金牌</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="video-card" data-video="beijing-2022">
+                        <div class="video-thumbnail"></div>
+                        <div class="video-info">
+                            <div class="video-title">北京2022冬奥会精彩时刻</div>
+                            <div class="video-description">
+                                <p><strong>时间：</strong>2022年2月5-20日</p>
+                                <p><strong>地点：</strong>北京首都体育馆</p>
+                                <p><strong>精彩看点：</strong>混合接力金牌时刻</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 视频观看详细页面 -->
+            <section id="video-watch" class="section">
+                <button class="back-btn" onclick="goBackToVideos()">← 返回赛事回放</button>
+                
+                <div class="video-watch-container">
+                    <div class="video-main">
+                        <!-- 视频播放器 -->
+                        <div class="video-player-container" id="videoPlayerContainer">
+                            <div class="video-player" id="videoPlayer">
+                                <span id="playIcon">▶</span>
+                            </div>
+                            <div class="video-controls" id="videoControls">
+                                <div class="controls-row">
+                                    <button class="play-pause-btn" id="playPauseBtn">▶</button>
+                                    <div class="progress-container" id="progressContainer">
+                                        <div class="progress-bar" id="progressBar"></div>
+                                    </div>
+                                    <div class="time-display" id="timeDisplay">0:00 / 0:00</div>
+                                    <div class="volume-container">
+                                        <button class="volume-btn" id="volumeBtn">🔊</button>
+                                        <input type="range" class="volume-slider" id="volumeSlider" min="0" max="100" value="70">
+                                    </div>
+                                    <button class="fullscreen-btn" id="fullscreenBtn">⛶</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 视频信息 -->
+                        <div class="video-info-section">
+                            <h3 id="watchVideoTitle">视频标题</h3>
+                            <div class="video-meta">
+                                <span class="video-date" id="watchVideoDate">日期</span>
+                                <span class="video-views" id="watchVideoViews">0 次观看</span>
+                                <button class="like-btn" id="likeBtn" disabled>
+                                    <span>❤</span>
+                                    <span class="like-count" id="likeCount">0</span>
+                                </button>
+                            </div>
+                            <p id="watchVideoDescription">视频描述</p>
+                        </div>
+
+                        <!-- 评论区 -->
+                        <div class="video-info-section">
+                            <div class="comments-section">
+                                <h4>评论区 (<span id="commentCount">0</span>)</h4>
+                                
+                                <div class="comment-input-container" id="commentInputContainer">
+                                    <div class="login-prompt">
+                                        <p>请先<a href="#" id="loginToComment">登录</a>后参与评论</p>
+                                    </div>
+                                </div>
+
+                                <div class="comments-list" id="commentsList">
+                                    <div class="no-comments">暂无评论，快来抢沙发吧！</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="video-sidebar">
+                        <!-- 视频统计 -->
+                        <div class="video-stats">
+                            <div class="stat-box">
+                                <div class="stat-box-number" id="totalViews">0</div>
+                                <div class="stat-box-label">总观看</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-box-number" id="totalLikes">0</div>
+                                <div class="stat-box-label">点赞数</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-box-number" id="totalComments">0</div>
+                                <div class="stat-box-label">评论数</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 赛事成绩 -->
+            <section id="results" class="section">
+                <div class="hero">
+                    <h2>赛事成绩</h2>
+                    <p>查看最新比赛成绩和详细数据统计</p>
+                </div>
+
+                <div class="card-grid">
+                    <div class="card">
+                        <h3>赛事成绩功能开发中</h3>
+                        <p>我们正在完善赛事成绩展示功能，敬请期待！</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 相关通知 -->
+            <section id="news" class="section">
+                <div class="hero">
+                    <h2>相关通知</h2>
+                    <p>最新的队伍动态、赛事安排和重要通知</p>
+                </div>
+
+                <div class="news-item" onclick="window.open('https://www.sport.gov.cn/n315/n329/index.html', '_blank')">
+                    <div class="news-date">2024年8月15日</div>
+                    <div class="news-title">2024-2025赛季短道速滑选拔赛通知</div>
+                    <div class="news-content">
+                        为选拔优秀短道速滑运动员参加新赛季各项国际赛事，国家体育总局冬季运动管理中心将组织2024-2025赛季短道速滑选拔赛。比赛时间为2024年9月1-3日，地点为北京首都体育馆。请符合条件的运动员及时报名参加。详细信息请查看国家体育总局冬季运动管理中心官方通知。
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2024 中国短道速滑国家队官方网站</p>
+            <p>为国争光 • 团结拼搏 • 永不言败</p>
+        </footer>
+    </div>
+
+    <script>
+        // 全局数据存储
+        let currentUser = null;
+        let users = {}; // 存储用户数据
+        let currentVideo = null;
+        let isPlaying = false;
+        let currentTime = 0;
+        let duration = 0;
+        let volume = 0.7;
+        let videoData = {}; // 存储视频数据
+        let videoStats = {}; // 存储视频统计数据
+        let videoComments = {}; // 存储视频评论
+
+        // 视频数据结构 - 可以轻松修改
+        const initialVideoData = {
+            '2025-worlds': {
+                title: '2025年世界短道速滑锦标赛 - 男子1500米决赛',
+                date: '2025年3月16日',
+                description: '刘少昂在2025年世界锦标赛男子1500米决赛中的精彩表现，最终以2:07.654的成绩夺得金牌并打破赛会纪录。',
+                duration: 323, // 秒
+                // 如果你有实际视频文件，可以在这里添加视频URL
+                // videoUrl: 'path/to/your/video.mp4'
+            },
+            'beijing-2022': {
+                title: '北京2022冬奥会 - 混合2000米接力决赛',
+                date: '2022年2月12日',
+                description: '中国短道速滑队在北京冬奥会混合2000米接力决赛中的夺金时刻，这是一场载入史册的经典比赛。',
+                duration: 285,
+                // videoUrl: 'path/to/your/video.mp4'
+            }
+        };
+
+        // 初始化数据
+        function initializeData() {
+            videoData = { ...initialVideoData };
+            
+            // 初始化视频统计数据（全部从0开始）
+            for (let videoId in videoData) {
+                if (!videoStats[videoId]) {
+                    videoStats[videoId] = {
+                        views: 0,
+                        likes: 0,
+                        likedBy: [] // 存储点赞用户ID
+                    };
+                }
+                if (!videoComments[videoId]) {
+                    videoComments[videoId] = [];
+                }
+            }
+        }
+
+        // 格式化时间函数
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // 格式化数字显示
+        function formatNumber(num) {
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        // 用户认证功能
+        function setupAuth() {
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const loginModal = document.getElementById('loginModal');
+            const registerModal = document.getElementById('registerModal');
+            const closeLoginModal = document.getElementById('closeLoginModal');
+            const closeRegisterModal = document.getElementById('closeRegisterModal');
+            const showRegister = document.getElementById('showRegister');
+            const showLogin = document.getElementById('showLogin');
+            const loginForm = document.getElementById('loginForm');
+            const registerForm = document.getElementById('registerForm');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            // 显示登录模态框
+            loginBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.add('active');
+                clearForm('loginForm');
+                hideMessage('loginError');
+            });
+
+            // 显示注册模态框
+            registerBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerModal.classList.add('active');
+                clearForm('registerForm');
+                hideMessage('registerError');
+                hideMessage('registerSuccess');
+            });
+
+            // 关闭模态框
+            closeLoginModal.addEventListener('click', () => {
+                loginModal.classList.remove('active');
+            });
+
+            closeRegisterModal.addEventListener('click', () => {
+                registerModal.classList.remove('active');
+            });
+
+            // 切换到注册
+            showRegister.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.classList.remove('active');
+                registerModal.classList.add('active');
+                clearForm('registerForm');
+                hideMessage('registerError');
+                hideMessage('registerSuccess');
+            });
+
+            // 切换到登录
+            showLogin.addEventListener('click', (e) => {
+                e.preventDefault();
+                registerModal.classList.remove('active');
+                loginModal.classList.add('active');
+                clearForm('loginForm');
+                hideMessage('loginError');
+            });
+
+            // 注册表单提交
+            registerForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('registerUsername').value.trim();
+                const password = document.getElementById('registerPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (password !== confirmPassword) {
+                    showMessage('registerError', '两次输入的密码不一致');
+                    return;
+                }
+
+                if (users[username]) {
+                    showMessage('registerError', '用户名已存在，请选择其他用户名');
+                    return;
+                }
+
+                // 注册用户
+                users[username] = {
+                    username: username,
+                    password: password,
+                    joinDate: new Date().toLocaleDateString()
+                };
+
+                showMessage('registerSuccess', '注册成功！请登录您的账户');
+                clearForm('registerForm');
+                
+                setTimeout(() => {
+                    registerModal.classList.remove('active');
+                    loginModal.classList.add('active');
+                    document.getElementById('loginUsername').value = username;
+                }, 1500);
+            });
+
+            // 登录表单提交
+            loginForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const username = document.getElementById('loginUsername').value.trim();
+                const password = document.getElementById('loginPassword').value;
+
+                if (!users[username] || users[username].password !== password) {
+                    showMessage('loginError', '用户名或密码错误');
+                    return;
+                }
+
+                // 登录成功
+                currentUser = users[username];
+                updateUserInterface();
+                loginModal.classList.remove('active');
+                clearForm('loginForm');
+            });
+
+            // 退出登录
+            logoutBtn.addEventListener('click', () => {
+                currentUser = null;
+                updateUserInterface();
+            });
+
+            // 点击模态框外部关闭
+            loginModal.addEventListener('click', (e) => {
+                if (e.target === loginModal) {
+                    loginModal.classList.remove('active');
+                }
+            });
+
+            registerModal.addEventListener('click', (e) => {
+                if (e.target === registerModal) {
+                    registerModal.classList.remove('active');
+                }
+            });
+        }
+
+        function clearForm(formId) {
+            document.getElementById(formId).reset();
+        }
+
+        function showMessage(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        function hideMessage(elementId) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'none';
+        }
+
+        function updateUserInterface() {
+            const userAuth = document.getElementById('userAuth');
+            const userInfo = document.getElementById('userInfo');
+            const likeBtn = document.getElementById('likeBtn');
+            const commentInputContainer = document.getElementById('commentInputContainer');
+
+            if (currentUser) {
+                // 显示用户信息，隐藏登录按钮
+                userAuth.style.display = 'none';
+                userInfo.style.display = 'flex';
+                document.getElementById('username').textContent = currentUser.username;
+                document.getElementById('userAvatar').textContent = currentUser.username.charAt(0);
+
+                // 启用点赞和评论功能
+                likeBtn.disabled = false;
+                likeBtn.classList.remove('login-required');
+                
+                // 显示评论输入框
+                commentInputContainer.innerHTML = `
+                    <div class="comment-avatar">${currentUser.username.charAt(0)}</div>
+                    <div class="comment-input-wrapper">
+                        <textarea class="comment-input" id="commentInput" placeholder="发表您的看法...支持选手！"></textarea>
+                        <button class="comment-submit" id="commentSubmit">发表评论</button>
+                    </div>
+                `;
+
+                // 重新绑定评论功能
+                setupComments();
+            } else {
+                // 显示登录按钮，隐藏用户信息
+                userAuth.style.display = 'flex';
+                userInfo.style.display = 'none';
+
+                // 禁用点赞和评论功能
+                likeBtn.disabled = true;
+                likeBtn.classList.add('login-required');
+                
+                // 显示登录提示
+                commentInputContainer.innerHTML = `
+                    <div class="login-prompt">
+                        <p>请先<a href="#" id="loginToComment">登录</a>后参与评论</p>
+                    </div>
+                `;
+
+                // 绑定登录提示点击事件
+                document.getElementById('loginToComment').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    document.getElementById('loginModal').classList.add('active');
+                });
+            }
+
+            // 更新当前视频的点赞状态
+            if (currentVideo && currentUser) {
+                updateLikeButton();
+            }
+        }
+
+        // 模拟视频播放
+        let playInterval;
+        function startVideo() {
+            if (isPlaying) return;
+            
+            isPlaying = true;
+            document.getElementById('playPauseBtn').textContent = '⏸';
+            document.getElementById('playIcon').style.display = 'none';
+            document.getElementById('videoPlayer').classList.add('playing');
+            
+            playInterval = setInterval(() => {
+                currentTime += 1;
+                if (currentTime >= duration) {
+                    currentTime = duration;
+                    pauseVideo();
+                }
+                updateProgress();
+            }, 1000);
+
+            // 增加观看次数（只在开始播放时增加一次）
+            if (currentVideo && currentTime === 1) {
+                videoStats[currentVideo].views++;
+                updateVideoStats();
+            }
+        }
+
+        function pauseVideo() {
+            isPlaying = false;
+            document.getElementById('playPauseBtn').textContent = '▶';
+            if (currentTime < duration) {
+                document.getElementById('playIcon').style.display = 'block';
+            }
+            document.getElementById('videoPlayer').classList.remove('playing');
+            clearInterval(playInterval);
+        }
+
+        function updateProgress() {
+            const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('timeDisplay').textContent = 
+                `${formatTime(currentTime)} / ${formatTime(duration)}`;
+        }
+
+        function updateVideoStats() {
+            if (!currentVideo) return;
+            
+            const stats = videoStats[currentVideo];
+            document.getElementById('totalViews').textContent = formatNumber(stats.views);
+            document.getElementById('totalLikes').textContent = formatNumber(stats.likes);
+            document.getElementById('totalComments').textContent = videoComments[currentVideo].length;
+            document.getElementById('watchVideoViews').textContent = stats.views + ' 次观看';
+            document.getElementById('likeCount').textContent = stats.likes;
+            document.getElementById('commentCount').textContent = videoComments[currentVideo].length;
+        }
+
+        function updateLikeButton() {
+            if (!currentUser || !currentVideo) return;
+            
+            const likeBtn = document.getElementById('likeBtn');
+            const stats = videoStats[currentVideo];
+            const isLiked = stats.likedBy.includes(currentUser.username);
+            
+            if (isLiked) {
+                likeBtn.classList.add('liked');
+                likeBtn.querySelector('span').textContent = '❤️';
+            } else {
+                likeBtn.classList.remove('liked');
+                likeBtn.querySelector('span').textContent = '❤';
+            }
+        }
+
+        // 设置视频控制
+        function setupVideoControls() {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const playPauseBtn = document.getElementById('playPauseBtn');
+            const progressContainer = document.getElementById('progressContainer');
+            const volumeBtn = document.getElementById('volumeBtn');
+            const volumeSlider = document.getElementById('volumeSlider');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+
+            // 播放/暂停
+            videoPlayer.addEventListener('click', togglePlayPause);
+            playPauseBtn.addEventListener('click', togglePlayPause);
+
+            function togglePlayPause() {
+                if (isPlaying) {
+                    pauseVideo();
+                } else {
+                    startVideo();
+                }
+            }
+
+            // 进度条控制
+            progressContainer.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                const progress = clickX / rect.width;
+                currentTime = Math.floor(progress * duration);
+                updateProgress();
+            });
+
+            // 音量控制
+            volumeBtn.addEventListener('click', function() {
+                if (volume > 0) {
+                    volume = 0;
+                    this.textContent = '🔇';
+                    volumeSlider.value = 0;
+                } else {
+                    volume = 0.7;
+                    this.textContent = '🔊';
+                    volumeSlider.value = 70;
+                }
+            });
+
+            volumeSlider.addEventListener('input', function() {
+                volume = this.value / 100;
+                const volumeBtn = document.getElementById('volumeBtn');
+                if (volume === 0) {
+                    volumeBtn.textContent = '🔇';
+                } else if (volume < 0.5) {
+                    volumeBtn.textContent = '🔉';
+                } else {
+                    volumeBtn.textContent = '🔊';
+                }
+            });
+
+            // 全屏功能
+            fullscreenBtn.addEventListener('click', toggleFullscreen);
+        }
+
+        function toggleFullscreen() {
+            const container = document.getElementById('videoPlayerContainer');
+            
+            if (!document.fullscreenElement) {
+                container.requestFullscreen().catch(err => {
+                    container.classList.add('fullscreen');
+                    document.getElementById('fullscreenBtn').textContent = '❏';
+                });
+            } else {
+                document.exitFullscreen().catch(err => {
+                    container.classList.remove('fullscreen');
+                    document.getElementById('fullscreenBtn').textContent = '⛶';
+                });
+            }
+        }
+
+        // 设置评论功能
+        function setupComments() {
+            const commentSubmit = document.getElementById('commentSubmit');
+            const commentInput = document.getElementById('commentInput');
+
+            if (!commentSubmit || !commentInput) return;
+
+            commentSubmit.addEventListener('click', function() {
+                const text = commentInput.value.trim();
+                if (text && currentUser) {
+                    addComment(text);
+                    commentInput.value = '';
+                }
+            });
+
+            commentInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    const text = this.value.trim();
+                    if (text && currentUser) {
+                        addComment(text);
+                        this.value = '';
+                    }
+                }
+            });
+        }
+
+        function addComment(text) {
+            if (!currentUser || !currentVideo) return;
+
+            const newComment = {
+                id: Date.now(),
+                author: currentUser.username,
+                text: text,
+                time: new Date().toLocaleString(),
+                avatar: currentUser.username.charAt(0)
+            };
+
+            videoComments[currentVideo].unshift(newComment);
+            updateVideoStats();
+            loadComments();
+        }
+
+        function loadComments() {
+            if (!currentVideo) return;
+
+            const commentsList = document.getElementById('commentsList');
+            const comments = videoComments[currentVideo];
+
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<div class="no-comments">暂无评论，快来抢沙发吧！</div>';
+                return;
+            }
+
+            commentsList.innerHTML = '';
+            comments.forEach(comment => {
+                const commentElement = document.createElement('div');
+                commentElement.className = 'comment-item';
+                commentElement.innerHTML = `
+                    <div class="comment-avatar">${comment.avatar}</div>
+                    <div class="comment-content">
+                        <div class="comment-author">${comment.author}</div>
+                        <div class="comment-text">${comment.text}</div>
+                        <div class="comment-time">${comment.time}</div>
+                    </div>
+                `;
+                commentsList.appendChild(commentElement);
+            });
+        }
+
+        // 设置点赞功能
+        function setupLikes() {
+            const likeBtn = document.getElementById('likeBtn');
+            likeBtn.addEventListener('click', function() {
+                if (!currentUser || !currentVideo) return;
+                
+                const stats = videoStats[currentVideo];
+                const userIndex = stats.likedBy.indexOf(currentUser.username);
+                
+                if (userIndex === -1) {
+                    // 点赞
+                    stats.likes++;
+                    stats.likedBy.push(currentUser.username);
+                    this.classList.add('liked');
+                    this.querySelector('span').textContent = '❤️';
+                } else {
+                    // 取消点赞
+                    stats.likes--;
+                    stats.likedBy.splice(userIndex, 1);
+                    this.classList.remove('liked');
+                    this.querySelector('span').textContent = '❤';
+                }
+                
+                updateVideoStats();
+            });
+        }
+
+        // 加载视频播放器
+        function loadVideoPlayer(videoId) {
+            currentVideo = videoId;
+            const video = videoData[videoId];
+            
+            if (video) {
+                // 重置播放状态
+                isPlaying = false;
+                currentTime = 0;
+                duration = video.duration;
+                
+                // 更新视频信息
+                document.getElementById('watchVideoTitle').textContent = video.title;
+                document.getElementById('watchVideoDate').textContent = video.date;
+                document.getElementById('watchVideoDescription').textContent = video.description;
+                
+                // 重置播放器
+                document.getElementById('playIcon').style.display = 'block';
+                document.getElementById('videoPlayer').classList.remove('playing');
+                document.getElementById('playPauseBtn').textContent = '▶';
+                updateProgress();
+                clearInterval(playInterval);
+                
+                // 更新统计和评论
+                updateVideoStats();
+                updateLikeButton();
+                loadComments();
+            }
+        }
+
+        // 页面切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化数据
+            initializeData();
+            
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('.section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 停止视频播放
+                    pauseVideo();
+                    
+                    // 移除所有活动状态
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    sections.forEach(section => section.classList.remove('active'));
+                    
+                    // 添加活动状态到当前链接
+                    this.classList.add('active');
+                    
+                    // 显示对应的内容区域
+                    const targetSection = document.getElementById(this.dataset.section);
+                    if (targetSection) {
+                        targetSection.classList.add('active');
+                    }
+                    
+                    // 滚动到顶部
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // 视频卡片点击事件
+            const videoCards = document.querySelectorAll('.video-card[data-video]');
+            videoCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // 隐藏所有页面
+                    sections.forEach(section => section.classList.remove('active'));
+                    
+                    // 显示视频观看页面
+                    const videoWatchSection = document.getElementById('video-watch');
+                    if (videoWatchSection) {
+                        videoWatchSection.classList.add('active');
+                    }
+                    
+                    // 更新导航状态
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    
+                    // 滚动到顶部
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 加载视频详细信息
+                    const videoId = this.dataset.video;
+                    loadVideoPlayer(videoId);
+                });
+            });
+
+            // 设置各种功能
+            setupAuth();
+            setupVideoControls();
+            setupLikes();
+            
+            // 初始化用户界面
+            updateUserInterface();
+            
+            // 其他功能
+            setupOtherFeatures();
+        });
+
+        function setupOtherFeatures() {
+            // 运动员链接
+            const athleteNameLinks = document.querySelectorAll('.athlete-name-link');
+            athleteNameLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    alert('运动员详细页面正在开发中，敬请期待！');
+                });
+            });
+
+            // ESC键和空格键控制
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const container = document.getElementById('videoPlayerContainer');
+                    if (container.classList.contains('fullscreen')) {
+                        container.classList.remove('fullscreen');
+                        document.getElementById('fullscreenBtn').textContent = '⛶';
+                    }
+                }
+                
+                if (e.key === ' ' && document.getElementById('video-watch').classList.contains('active')) {
+                    e.preventDefault();
+                    if (isPlaying) {
+                        pauseVideo();
+                    } else {
+                        startVideo();
+                    }
+                }
+            });
+        }
+
+        // 返回赛事回放列表的函数
+        function goBackToVideos() {
+            pauseVideo();
+            
+            const sections = document.querySelectorAll('.section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            sections.forEach(section => section.classList.remove('active'));
+            
+            const videosSection = document.getElementById('videos');
+            if (videosSection) {
+                videosSection.classList.add('active');
+            }
+            
+            navLinks.forEach(nav => nav.classList.remove('active'));
+            const videosNav = document.querySelector('[data-section="videos"]');
+            if (videosNav) {
+                videosNav.classList.add('active');
+            }
+            
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // 监听全屏变化
+        document.addEventListener('fullscreenchange', function() {
+            const container = document.getElementById('videoPlayerContainer');
+            const fullscreenBtn = document.getElementById('fullscreenBtn');
+            
+            if (document.fullscreenElement) {
+                fullscreenBtn.textContent = '❏';
+            } else {
+                fullscreenBtn.textContent = '⛶';
+                container.classList.remove('fullscreen');
+            }
+        });
+
+        /*
+        ==================== 视频替换指南 ====================
+        
+        如果您想替换视频，请按照以下步骤操作：
+
+        1. 准备视频文件：
+           - 将您的视频文件上传到您的服务器或使用视频托管服务
+           - 确保视频格式为 MP4, WebM 或 OGV
+           
+        2. 修改视频数据：
+           在 initialVideoData 对象中添加或修改视频信息：
+           
+           const initialVideoData = {
+               'your-video-id': {
+                   title: '您的视频标题',
+                   date: '发布日期',
+                   description: '视频描述',
+                   duration: 300, // 视频时长（秒）
+                   videoUrl: 'https://your-domain.com/path/to/video.mp4' // 实际视频URL
+               }
+           };
+
+        3. 添加视频卡片：
+           在HTML的video-grid部分添加新的video-card：
+           
+           <div class="video-card" data-video="your-video-id">
+               <div class="video-thumbnail"></div>
+               <div class="video-info">
+                   <div class="video-title">您的视频标题</div>
+                   <div class="video-description">
+                       <p><strong>时间：</strong>发布时间</p>
+                       <p><strong>地点：</strong>拍摄地点</p>
+                       <p><strong>精彩看点：</strong>视频亮点</p>
+                   </div>
+               </div>
+           </div>
+
+        4. 启用真实视频播放（可选）：
+           如果您有真实的视频文件，可以修改video-player div为：
+           
+           <video controls id="realVideo" style="width: 100%; height: 100%;">
+               <source src="video-url" type="video/mp4">
+           </video>
+
+        5. 自定义缩略图（可选）：
+           将video-thumbnail的CSS背景改为：
+           background: url('your-thumbnail.jpg') center/cover;
+
+        ==================== 示例操作 ====================
+        
+        假设您要添加一个新的训练视频：
+        
+        1. 在initialVideoData中添加：
+           'training-2024': {
+               title: '2024年夏季训练集锦',
+               date: '2024年8月20日',
+               description: '展现队员们夏季体能训练的精彩瞬间',
+               duration: 240,
+               videoUrl: 'https://example.com/training-2024.mp4'
+           }
+        
+        2. 在HTML中添加对应的video-card，data-video="training-2024"
+        
+        就这么简单！
+        */
+
+        // 初始化
+        updateProgress();
+    </script>
+</body>
+</html>
